@@ -20,6 +20,8 @@ namespace sistema_vendas
                 Console.WriteLine("2 - Cadastro de produtos");
                 Console.WriteLine("3 - Realizar vendas");
                 Console.WriteLine("4 - Extrato de cliente");
+                Console.WriteLine("5 - Consulta clientes");
+                Console.WriteLine("6 - Consulta produtos");
                 Console.WriteLine("9 - Sair");
 
                 opcao = Int32.Parse(Console.ReadLine());
@@ -42,30 +44,35 @@ namespace sistema_vendas
                         int tipo_pf_pj = Int32.Parse(Console.ReadLine());
                         if (tipo_pf_pj == 1)
                         {
-                            Console.Write("CPF (apenas números):");
+                            Console.Write("CPF (apenas números): ");
                             cpf_cnpj = Console.ReadLine();
                             while (validaCpf(cpf_cnpj) == false)
                             {
-                                Console.Write("Digite um CPF valido (apenas números):");
+                                Console.Write("Digite um CPF valido (apenas números): ");
                                 cpf_cnpj = Console.ReadLine();
                             }
-                            Console.WriteLine();
-                            Console.WriteLine("Cliente cadastrado com sucesso");
                         }
                         if (tipo_pf_pj == 2)
                         {
-                            Console.Write("CNPJ (apenas números):");
+                            Console.Write("CNPJ (apenas números): ");
                             cpf_cnpj = Console.ReadLine();
                             while (validaCnpj(cpf_cnpj) == false)
                             {
-                                Console.Write("Digite um CNPJ valido (apenas números):");
+                                Console.Write("Digite um CNPJ valido (apenas números): ");
                                 cpf_cnpj = Console.ReadLine();
                             }
+                        }
+
+                        if (consultaCpfCnpj(cpf_cnpj))
+                        {
+                            Console.WriteLine("CPF/CNPJ já cadastrado");
+                        }
+                        else
+                        {
+                            gravaClientes(nome, email, tipo_pf_pj, cpf_cnpj);
                             Console.WriteLine();
                             Console.WriteLine("Cliente cadastrado com sucesso");
                         }
-
-                        gravaClientes(nome, email, tipo_pf_pj, cpf_cnpj);
 
                         break;
 
@@ -83,10 +90,17 @@ namespace sistema_vendas
                         Console.Write("Preço do produto: ");
                         double preco = Double.Parse(Console.ReadLine());
 
-                        gravaProdutos(cod_produto, nome_produto, desc_produto, preco);
-                        
-                        Console.WriteLine();
-                        Console.WriteLine("Produto cadastrado com sucesso");
+                        if (consultaIdProduto(cod_produto))
+                        {
+                            Console.WriteLine("Produto já cadastrado");
+                        }
+                        else
+                        {
+                            gravaProdutos(cod_produto, nome_produto, desc_produto, preco);
+                            Console.WriteLine();
+                            Console.WriteLine("Produto cadastrado com sucesso");
+                        }
+
                         break;
 
                     case 3:
@@ -174,6 +188,26 @@ namespace sistema_vendas
                                 Console.WriteLine("Opção inválida");
                                 break;
                         }
+                        break;
+
+                    case 5:
+                        Console.Clear();
+                        Console.WriteLine("------------------------------");
+                        Console.WriteLine("-----Clientes Cadastrados-----");
+                        Console.WriteLine("------------------------------");
+                        Console.WriteLine();
+
+                        consultaClientes();
+                        break;
+
+                    case 6:
+                        Console.Clear();
+                        Console.WriteLine("------------------------------");
+                        Console.WriteLine("-----Produtos Cadastrados-----");
+                        Console.WriteLine("------------------------------");
+                        Console.WriteLine();
+
+                        consultaProdutos();
                         break;
 
                     default:
@@ -430,6 +464,28 @@ namespace sistema_vendas
                 {
                     Console.WriteLine(txt.Replace(";", "\t"));
                 }
+            }
+        }
+
+        static void consultaClientes()
+        {
+            StreamReader srClientes = new StreamReader("_Clientes.csv");
+            String txt = "";
+
+            while ((txt = srClientes.ReadLine()) != null)
+            {
+                Console.WriteLine(txt.Replace(";", "\t"));
+            }
+        }
+
+        static void consultaProdutos()
+        {
+            StreamReader srProdutos = new StreamReader("_Produtos.csv");
+            String txt = "";
+            
+            while ((txt = srProdutos.ReadLine()) != null)
+            {
+                Console.WriteLine(txt.Replace(";", "\t"));
             }
         }
     }
